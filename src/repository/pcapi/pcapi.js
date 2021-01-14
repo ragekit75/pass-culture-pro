@@ -114,6 +114,10 @@ export const getValidatedOfferers = () => {
   return client.get('/offerers?validated=true')
 }
 
+export const getOffererById = (id) => {
+  return client.get(`/offerers/${id}`)
+}
+
 export const getVenuesForOfferer = offererId => {
   if (offererId) {
     return client.get(`/venues?offererId=${offererId}`)

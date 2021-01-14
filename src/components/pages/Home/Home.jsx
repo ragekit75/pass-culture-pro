@@ -1,25 +1,71 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import PageTitle from 'components/layout/PageTitle/PageTitle'
+import * as pcapi from 'repository/pcapi/pcapi'
 
-import Card from './Card/Card'
+import Select, { buildSelectOptions } from '../../layout/inputs/Select'
 
-const Home = () => (
-  <div className="home-cards columns">
-    <PageTitle title="Accueil" />
-    <Card
-      navLink="/guichet"
-      svg="ico-guichet-w"
-      text="Enregistrez les codes de réservation des porteurs du Pass."
-      title="Guichet"
-    />
-    <Card
-      navLink="/offres"
-      svg="ico-offres-w"
-      text="Créez et mettez en avant vos offres présentes sur le Pass."
-      title="Offres"
-    />
-  </div>
-)
+const Home = () => {
+  const [offerers, setOfferers] = useState([])
+  const [selectedOffererId, setSelectedOffererId] = useState('')
+  const [offererDetails, setOffererDetails] = useState(null)
+
+  useEffect(() => {
+    pcapi.getValidatedOfferers().then(receivedOfferers => {
+      setOfferers(buildSelectOptions('id', 'name', receivedOfferers))
+      setSelectedOffererId(receivedOfferers[0].id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (selectedOffererId !== '') {
+      pcapi.getOffererById(selectedOffererId).then(receivedOfferer => {
+        setOffererDetails(receivedOfferer)
+      })
+    }
+  }, [selectedOffererId])
+
+  const selectOfferer = useCallback(event => setSelectedOffererId(event.target.value), [])
+
+  return (
+    <div className="">
+      <PageTitle title="Accueil" />
+      <Select
+        defaultOption={{
+          displayName: 'Sélectionnez une structure',
+          id: '',
+        }}
+        handleSelection={selectOfferer}
+        label="Structure"
+        name="offererId"
+        options={offerers}
+        selectedValue={selectedOffererId}
+      />
+
+      {offererDetails &&
+        offererDetails.venues.map(venue => {
+          return (
+            <section key={venue.id}>
+              <h3 className="section-title">
+                {venue.name}
+              </h3>
+              <div>
+                {`Réservations en cours : ${venue.onGoingBookingsCount}`}
+              </div>
+              <div>
+                {`Réservations validées : ${venue.validatedBookingsCount}`}
+              </div>
+              <div>
+                {`Offres actives : ${venue.offers.length}`}
+              </div>
+              <div>
+                {`Offres épuisées : ${venue.offers.length}`}
+              </div>
+            </section>
+          )
+        })}
+    </div>
+  )
+}
 
 export default Home
