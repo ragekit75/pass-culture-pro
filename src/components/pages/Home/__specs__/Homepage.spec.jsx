@@ -45,7 +45,7 @@ const renderHomePage = async () => {
   })
 }
 
-describe('homepage : Tabs : Offerers', () => {
+describe('homepage', () => {
   let baseOfferers
   let baseOfferersNames
   let baseVenues
@@ -293,6 +293,35 @@ describe('homepage : Tabs : Offerers', () => {
       await renderHomePage()
 
       expect(await screen.findByRole('link', { name: 'Voir le dossier' })).toBeInTheDocument()
+    })
+
+    describe('profile section', () => {
+      it('should display profile informations', async () => {
+        // then
+        expect(await screen.findByText('Nom :')).toBeInTheDocument()
+        expect(await screen.findByText('Do')).toBeInTheDocument()
+        expect(await screen.findByText('Prénom :')).toBeInTheDocument()
+        expect(await screen.findByText('John')).toBeInTheDocument()
+        expect(await screen.findByText('E-mail :')).toBeInTheDocument()
+        expect(await screen.findByText('john.do@dummy.xyz')).toBeInTheDocument()
+        expect(await screen.findByText('Téléphone :')).toBeInTheDocument()
+        expect(await screen.findByText('01 00 00 00 00')).toBeInTheDocument()
+      })
+
+      it('should display profile modifications modal when clicking on modify button', async () => {
+        // when
+        fireEvent.click(screen.getByText('Modifier', { selector: 'button' }))
+
+        // then
+        const lastNameInput = await screen.findByLabelText('Nom')
+        const firstNameInput = await screen.findByLabelText('Prénom')
+        const emailInput = await screen.findByLabelText('Email')
+        const phoneInput = await screen.findByLabelText('Téléphone')
+        expect(lastNameInput).toBeInTheDocument()
+        expect(firstNameInput).toBeInTheDocument()
+        expect(emailInput).toBeInTheDocument()
+        expect(phoneInput).toBeInTheDocument()
+      })
     })
   })
 })
