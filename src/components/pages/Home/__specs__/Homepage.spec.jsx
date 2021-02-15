@@ -120,207 +120,214 @@ describe('homepage', () => {
       await renderHomePage()
     })
 
-    it('should display section and subsection titles', async () => {
-      expect(await screen.findByText('Informations pratiques')).toBeInTheDocument()
-      expect(await screen.findByText('Coordonnées bancaires')).toBeInTheDocument()
-      expect(await screen.findByText('Profil et aide', { selector: 'h2' })).toBeInTheDocument()
-      expect(await screen.findByText('Profil')).toBeInTheDocument()
-      expect(await screen.findByText('Aide et support')).toBeInTheDocument()
-      expect(await screen.findByText('Modalités d’usage', { selector: 'h2' })).toBeInTheDocument()
-    })
-
-    it('should display help links', async () => {
-      const contactLink = await screen.findByText('Contacter le support', { selector: 'a' })
-      const cguLink = await screen.findByText('Conditions Générales d’Utilisation', {
-        selector: 'a',
+    describe('offerer section', () => {
+      it('should display section and subsection titles', async () => {
+        expect(await screen.findByText('Informations pratiques')).toBeInTheDocument()
+        expect(await screen.findByText('Coordonnées bancaires')).toBeInTheDocument()
+        expect(await screen.findByText('Profil et aide', { selector: 'h2' })).toBeInTheDocument()
+        expect(await screen.findByText('Profil')).toBeInTheDocument()
+        expect(await screen.findByText('Aide et support')).toBeInTheDocument()
+        expect(await screen.findByText('Modalités d’usage', { selector: 'h2' })).toBeInTheDocument()
       })
-      const faqLink = await screen.findByText('Foire Aux Questions', { selector: 'a' })
 
-      expect(contactLink).toBeInTheDocument()
-      expect(cguLink).toBeInTheDocument()
-      expect(faqLink).toBeInTheDocument()
-
-      expect(contactLink.getAttribute('href')).toBe('mailto:support@passculture.app')
-      expect(cguLink.getAttribute('href')).toBe('https://pass.culture.fr/cgu-professionnels/')
-      expect(faqLink.getAttribute('href')).toBe(
-        'https://aide.passculture.app/fr/category/acteurs-culturels-1t20dhs/'
-      )
-    })
-
-    it('should display offerer select', () => {
-      const selectedOffer = baseOfferers[0]
-      expect(screen.getByDisplayValue(selectedOffer.name)).toBeInTheDocument()
-    })
-
-    it('should display first offerer informations', async () => {
-      const selectedOfferer = baseOfferers[0]
-      const selectedOffererAddress = `${selectedOfferer.address} ${selectedOfferer.postalCode} ${selectedOfferer.city}`
-      expect(await screen.findByText(selectedOfferer.siren)).toBeInTheDocument()
-      expect(
-        await screen.findByText(selectedOfferer.name, { selector: 'span' })
-      ).toBeInTheDocument()
-      expect(await screen.findByText(selectedOffererAddress)).toBeInTheDocument()
-    })
-
-    it('should display first offerer bank information', async () => {
-      const selectedOfferer = baseOfferers[0]
-      expect(await screen.findByText(selectedOfferer.iban)).toBeInTheDocument()
-      expect(await screen.findByText(selectedOfferer.bic)).toBeInTheDocument()
-    })
-
-    it('should display offerer venues informations', async () => {
-      const virtualVenueTitle = await screen.findByText('Lieu numérique')
-      expect(virtualVenueTitle).toBeInTheDocument()
-
-      const offlineVenueTitle = await screen.findByText(baseVenues[1].name)
-      expect(offlineVenueTitle).toBeInTheDocument()
-      const offlineVenueContainer = offlineVenueTitle.closest('div')
-      expect(
-        within(offlineVenueContainer).getByText('Modifier', { exact: false })
-      ).toBeInTheDocument()
-
-      const secondOfflineVenueTitle = await screen.findByText(baseVenues[2].publicName)
-      expect(secondOfflineVenueTitle).toBeInTheDocument()
-    })
-
-    describe('when selected offerer change', () => {
-      let newSelectedOfferer
-      let newSelectedOffererVenues
-      beforeEach(async () => {
-        const selectedOffer = baseOfferers[0]
-        newSelectedOfferer = baseOfferers[1]
-        newSelectedOffererVenues = [
-          {
-            id: 'test_venue_id_3',
-            isVirtual: true,
-            managingOffererId: newSelectedOfferer.id,
-            name: 'New venue (Offre numérique)',
-            offererName: newSelectedOfferer.name,
-            publicName: null,
-          },
-          {
-            id: 'test_venue_id_4',
-            isVirtual: false,
-            managingOffererId: newSelectedOfferer.id,
-            name: 'New venue (Offre physique)',
-            offererName: newSelectedOfferer.name,
-            publicName: null,
-          },
-          {
-            id: 'test_venue_id_5',
-            isVirtual: false,
-            managingOffererId: newSelectedOfferer.id,
-            name: 'Second new venue (Offre physique)',
-            offererName: newSelectedOfferer.name,
-            publicName: 'Second new venue public name',
-          },
-        ]
-        pcapi.getVenuesForOfferer.mockResolvedValue(newSelectedOffererVenues)
-
-        pcapi.getOfferer.mockResolvedValue(newSelectedOfferer)
-        await act(async () => {
-          await fireEvent.change(screen.getByDisplayValue(selectedOffer.name), {
-            target: { value: newSelectedOfferer.id },
-          })
+      it('should display help links', async () => {
+        const contactLink = await screen.findByText('Contacter le support', { selector: 'a' })
+        const cguLink = await screen.findByText('Conditions Générales d’Utilisation', {
+          selector: 'a',
         })
+        const faqLink = await screen.findByText('Foire Aux Questions', { selector: 'a' })
+
+        expect(contactLink).toBeInTheDocument()
+        expect(cguLink).toBeInTheDocument()
+        expect(faqLink).toBeInTheDocument()
+
+        expect(contactLink.getAttribute('href')).toBe('mailto:support@passculture.app')
+        expect(cguLink.getAttribute('href')).toBe('https://pass.culture.fr/cgu-professionnels/')
+        expect(faqLink.getAttribute('href')).toBe(
+          'https://aide.passculture.app/fr/category/acteurs-culturels-1t20dhs/'
+        )
       })
 
-      it('should change displayed offerer informations', async () => {
-        const selectedOffererAddress = `${newSelectedOfferer.address} ${newSelectedOfferer.postalCode} ${newSelectedOfferer.city}`
+      it('should display offerer select', () => {
+        const selectedOffer = baseOfferers[0]
+        expect(screen.getByDisplayValue(selectedOffer.name)).toBeInTheDocument()
+      })
 
-        expect(await screen.findByText(newSelectedOfferer.siren)).toBeInTheDocument()
+      it('should display first offerer informations', async () => {
+        const selectedOfferer = baseOfferers[0]
+        const selectedOffererAddress = `${selectedOfferer.address} ${selectedOfferer.postalCode} ${selectedOfferer.city}`
+        expect(await screen.findByText(selectedOfferer.siren)).toBeInTheDocument()
         expect(
-          await screen.findByText(newSelectedOfferer.name, { selector: 'span' })
+          await screen.findByText(selectedOfferer.name, { selector: 'span' })
         ).toBeInTheDocument()
         expect(await screen.findByText(selectedOffererAddress)).toBeInTheDocument()
       })
 
-      it('should change displayed bank information', async () => {
-        expect(await screen.findByText(newSelectedOfferer.iban)).toBeInTheDocument()
-        expect(await screen.findByText(newSelectedOfferer.bic)).toBeInTheDocument()
+      it('should display first offerer bank information', async () => {
+        const selectedOfferer = baseOfferers[0]
+        expect(await screen.findByText(selectedOfferer.iban)).toBeInTheDocument()
+        expect(await screen.findByText(selectedOfferer.bic)).toBeInTheDocument()
       })
-
-      it('should display new offerer venues informations', async () => {
+      it('should display offerer venues informations', async () => {
         const virtualVenueTitle = await screen.findByText('Lieu numérique')
         expect(virtualVenueTitle).toBeInTheDocument()
 
-        const offlineVenueTitle = await screen.findByText(newSelectedOffererVenues[1].name)
+        const offlineVenueTitle = await screen.findByText(baseVenues[1].name)
         expect(offlineVenueTitle).toBeInTheDocument()
         const offlineVenueContainer = offlineVenueTitle.closest('div')
         expect(
           within(offlineVenueContainer).getByText('Modifier', { exact: false })
         ).toBeInTheDocument()
-
-        const secondOfflineVenueTitle = await screen.findByText(
-          newSelectedOffererVenues[2].publicName
-        )
+        const secondOfflineVenueTitle = await screen.findByText(baseVenues[2].publicName)
         expect(secondOfflineVenueTitle).toBeInTheDocument()
       })
-    })
-  })
-  describe("when offerer doesn't have bank informations", () => {
-    it('should display add information link', async () => {
-      baseOfferers = [
-        {
-          ...baseOfferers[0],
-          ...{
-            bic: '',
-            iban: '',
-          },
-        },
-      ]
-      pcapi.getOfferer.mockResolvedValue(baseOfferers[0])
-      await renderHomePage()
 
-      const link = await screen.findByRole('link', {
-        name: 'Renseignez les coordonnées bancaires de la structure',
+      describe('when selected offerer change', () => {
+        let newSelectedOfferer
+        let newSelectedOffererVenues
+        beforeEach(async () => {
+          const selectedOffer = baseOfferers[0]
+          newSelectedOfferer = baseOfferers[1]
+          newSelectedOffererVenues = [
+            {
+              id: 'test_venue_id_3',
+              isVirtual: true,
+              managingOffererId: newSelectedOfferer.id,
+              name: 'New venue (Offre numérique)',
+              offererName: newSelectedOfferer.name,
+              publicName: null,
+            },
+            {
+              id: 'test_venue_id_4',
+              isVirtual: false,
+              managingOffererId: newSelectedOfferer.id,
+              name: 'New venue (Offre physique)',
+              offererName: newSelectedOfferer.name,
+              publicName: null,
+            },
+            {
+              id: 'test_venue_id_5',
+              isVirtual: false,
+              managingOffererId: newSelectedOfferer.id,
+              name: 'Second new venue (Offre physique)',
+              offererName: newSelectedOfferer.name,
+              publicName: 'Second new venue public name',
+            },
+          ]
+          pcapi.getVenuesForOfferer.mockResolvedValue(newSelectedOffererVenues)
+
+          pcapi.getOfferer.mockResolvedValue(newSelectedOfferer)
+          await act(async () => {
+            await fireEvent.change(screen.getByDisplayValue(selectedOffer.name), {
+              target: { value: newSelectedOfferer.id },
+            })
+          })
+        })
+
+        it('should change displayed offerer informations', async () => {
+          const selectedOffererAddress = `${newSelectedOfferer.address} ${newSelectedOfferer.postalCode} ${newSelectedOfferer.city}`
+
+          expect(await screen.findByText(newSelectedOfferer.siren)).toBeInTheDocument()
+          expect(
+            await screen.findByText(newSelectedOfferer.name, { selector: 'span' })
+          ).toBeInTheDocument()
+          expect(await screen.findByText(selectedOffererAddress)).toBeInTheDocument()
+        })
+
+        it('should change displayed bank information', async () => {
+          expect(await screen.findByText(newSelectedOfferer.iban)).toBeInTheDocument()
+          expect(await screen.findByText(newSelectedOfferer.bic)).toBeInTheDocument()
+        })
+
+        it('should display new offerer venues informations', async () => {
+          const virtualVenueTitle = await screen.findByText('Lieu numérique')
+          expect(virtualVenueTitle).toBeInTheDocument()
+
+          const offlineVenueTitle = await screen.findByText(newSelectedOffererVenues[1].name)
+          expect(offlineVenueTitle).toBeInTheDocument()
+          const offlineVenueContainer = offlineVenueTitle.closest('div')
+          expect(
+            within(offlineVenueContainer).getByText('Modifier', { exact: false })
+          ).toBeInTheDocument()
+
+          const secondOfflineVenueTitle = await screen.findByText(
+            newSelectedOffererVenues[2].publicName
+          )
+          expect(secondOfflineVenueTitle).toBeInTheDocument()
+        })
       })
-      expect(link).toBeInTheDocument()
     })
-
-    it('should display file information for pending registration', async () => {
-      baseOfferers = [
-        {
-          ...baseOfferers[0],
-          ...{
-            bic: '',
-            iban: '',
-            demarchesSimplifieesApplicationId: 'demarchesSimplifieesApplication_fake_id',
+    describe('when offerer doesn\'t have bank informations', () => {
+      it('should display add information link', async () => {
+        baseOfferers = [
+          {
+            ...baseOfferers[0],
+            ...{
+              bic: '',
+              iban: '',
+            },
           },
-        },
-      ]
-      pcapi.getOfferer.mockResolvedValue(baseOfferers[0])
-      await renderHomePage()
+        ]
+        pcapi.getOfferer.mockResolvedValue(baseOfferers[0])
+        await renderHomePage()
 
-      expect(await screen.findByRole('link', { name: 'Voir le dossier' })).toBeInTheDocument()
-    })
-
-    describe('profile section', () => {
-      it('should display profile informations', async () => {
-        // then
-        expect(await screen.findByText('Nom :')).toBeInTheDocument()
-        expect(await screen.findByText('Do')).toBeInTheDocument()
-        expect(await screen.findByText('Prénom :')).toBeInTheDocument()
-        expect(await screen.findByText('John')).toBeInTheDocument()
-        expect(await screen.findByText('E-mail :')).toBeInTheDocument()
-        expect(await screen.findByText('john.do@dummy.xyz')).toBeInTheDocument()
-        expect(await screen.findByText('Téléphone :')).toBeInTheDocument()
-        expect(await screen.findByText('01 00 00 00 00')).toBeInTheDocument()
+        const link = await screen.findByRole('link', {
+          name: 'Renseignez les coordonnées bancaires de la structure',
+        })
+        expect(link).toBeInTheDocument()
       })
 
-      it('should display profile modifications modal when clicking on modify button', async () => {
-        // when
-        fireEvent.click(screen.getByText('Modifier', { selector: 'button' }))
+      it('should display file information for pending registration', async () => {
+        baseOfferers = [
+          {
+            ...baseOfferers[0],
+            ...{
+              bic: '',
+              iban: '',
+              demarchesSimplifieesApplicationId: 'demarchesSimplifieesApplication_fake_id',
+            },
+          },
+        ]
+        pcapi.getOfferer.mockResolvedValue(baseOfferers[0])
+        await renderHomePage()
 
-        // then
-        const lastNameInput = await screen.findByLabelText('Nom')
-        const firstNameInput = await screen.findByLabelText('Prénom')
-        const emailInput = await screen.findByLabelText('Email')
-        const phoneInput = await screen.findByLabelText('Téléphone')
-        expect(lastNameInput).toBeInTheDocument()
-        expect(firstNameInput).toBeInTheDocument()
-        expect(emailInput).toBeInTheDocument()
-        expect(phoneInput).toBeInTheDocument()
+        expect(await screen.findByRole('link', { name: 'Voir le dossier' })).toBeInTheDocument()
+      })
+
+      describe('profile section', () => {
+        it('should display profile informations', async () => {
+          // then
+          expect(await screen.findByText('Nom :')).toBeInTheDocument()
+          expect(await screen.findByText('Do')).toBeInTheDocument()
+          expect(await screen.findByText('Prénom :')).toBeInTheDocument()
+          expect(await screen.findByText('John')).toBeInTheDocument()
+          expect(await screen.findByText('E-mail :')).toBeInTheDocument()
+          expect(await screen.findByText('john.do@dummy.xyz')).toBeInTheDocument()
+          expect(await screen.findByText('Téléphone :')).toBeInTheDocument()
+          expect(await screen.findByText('01 00 00 00 00')).toBeInTheDocument()
+        })
+
+        it('should display profile modifications modal when clicking on modify button', async () => {
+          // when
+          fireEvent.click(screen.getByText('Modifier', { selector: 'button' }))
+
+          // then
+          expect(await screen.findByLabelText('Nom')).toBeInTheDocument()
+          expect(await screen.findByLabelText('Prénom')).toBeInTheDocument()
+          expect(await screen.findByLabelText('Email')).toBeInTheDocument()
+          expect(await screen.findByLabelText('Téléphone')).toBeInTheDocument()
+        })
+
+        it('should close the modal when clicking on cancel button', async () => {
+          // given
+          fireEvent.click(screen.getByText('Modifier', { selector: 'button' }))
+
+          // when
+          fireEvent.click(screen.getByText('Annuler', { selector: 'button' }))
+
+          // then
+          expect(await screen.queryByLabelText('Nom')).not.toBeInTheDocument()
+        })
       })
     })
   })
