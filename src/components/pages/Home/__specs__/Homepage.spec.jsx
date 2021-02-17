@@ -18,6 +18,7 @@ jest.mock('repository/pcapi/pcapi', () => ({
   getOfferer: jest.fn(),
   getAllOfferersNames: jest.fn(),
   getVenuesForOfferer: jest.fn(),
+  updateUserInformations: jest.fn().mockResolvedValue({}),
 }))
 
 const renderHomePage = async () => {
@@ -327,6 +328,36 @@ describe('homepage', () => {
 
           // then
           expect(await screen.queryByLabelText('Nom')).not.toBeInTheDocument()
+        })
+      })
+
+      it('should update user info on submit', async () => {
+        // given
+        fireEvent.click(screen.getByText('Modifier', { selector: 'button' }))
+        fireEvent.change(screen.getByLabelText('Prénom'), {
+          target: { value: 'Johnny' },
+        })
+        fireEvent.change(screen.getByLabelText('Nom'), {
+          target: { value: 'Doe' },
+        })
+        fireEvent.change(screen.getByLabelText('Email'), {
+          target: { value: 'johnny.doe@dummy.xyz' },
+        })
+        fireEvent.change(screen.getByLabelText('Téléphone'), {
+          target: { value: '01 01 00 00 00' },
+        })
+
+        // when
+        await act(async () => {
+          await fireEvent.click(screen.getByText('Enregistrer', { selector: 'button' }))
+        })
+
+        // then
+        expect(pcapi.updateUserInformations).toHaveBeenCalledWith({
+          firstName: 'Johnny',
+          lastName: 'Doe',
+          email: 'johnny.doe@dummy.xyz',
+          phoneNumber: '01 01 00 00 00',
         })
       })
     })
