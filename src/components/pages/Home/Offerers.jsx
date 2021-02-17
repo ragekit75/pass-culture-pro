@@ -7,6 +7,7 @@ import Spinner from 'components/layout/Spinner'
 import * as pcapi from 'repository/pcapi/pcapi'
 
 import { steps, STEP_ID_OFFERERS } from './HomepageBreadcrumb'
+import VenueItem from "./VenueItem"
 
 const Offerers = () => {
   const [offererOptions, setOffererOptions] = useState([])
@@ -111,9 +112,9 @@ const Offerers = () => {
                       {'Siège social : '}
                     </span>
                     <span className="h-dl-description">
-                      {selectedOfferer.address} 
+                      {selectedOfferer.address}
                       {' '}
-                      {selectedOfferer.postalCode} 
+                      {selectedOfferer.postalCode}
                       {' '}
                       {selectedOfferer.city}
                     </span>
@@ -151,32 +152,8 @@ const Offerers = () => {
 
         {offlineVenues &&
           offlineVenues.map(venue => (
-            <div
-              className="h-section-row nested"
-              key={venue.id}
-            >
-              <div className="h-card h-card-secondary">
-                <div className="h-card-inner">
-                  <div className="h-card-header-row">
-                    <h3 className="h-card-title">
-                      <Icon
-                        className="h-card-title-ico"
-                        svg="ico-box"
-                      />
-                      {venue.publicName || venue.name}
-                    </h3>
-                    <Link
-                      className="tertiary-button"
-                      to={`/structures/${selectedOfferer.id}/lieux/${venue.id}`}
-                    >
-                      <Icon svg="ico-outer-pen" />
-                      {'Modifier'}
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+            <VenueItem key={venue.id} offerer={selectedOfferer} venue={venue}/>
+            ))}
       </div>
     </>
   )
