@@ -1,19 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import Icon from 'components/layout/Icon'
-import Select, { buildSelectOptions } from 'components/layout/inputs/Select'
-import Spinner from 'components/layout/Spinner'
 import * as pcapi from 'repository/pcapi/pcapi'
-
-import { steps, STEP_ID_OFFERERS } from './HomepageBreadcrumb'
 
 const VenueItem = ({ offerer, venue }) => {
   const [stats, setStats] = useState([])
+  const [statsPerf, setStatsPerf] = useState([])
 
   useEffect(function fetchData() {
     pcapi.getVenueStats(venue.id).then(stats => setStats(stats))
-  }, [])
+    pcapi.getVenueStatsPerf(venue.id).then(stats => setStatsPerf(stats))
+  }, [venue.id])
   return (
     <div
       className="h-section-row nested"
@@ -37,6 +35,7 @@ const VenueItem = ({ offerer, venue }) => {
             </Link>
           </div>
           <div className="h-card-content">
+            <h3>{"Sans perf"}</h3>
             <ul className="h-description-list">
               <li className="h-dl-row">
                     <span className="h-dl-title">
@@ -60,6 +59,33 @@ const VenueItem = ({ offerer, venue }) => {
                     </span>
                 <span className="h-dl-description">
                       {stats?.offersSoldOut}
+                    </span>
+              </li>
+            </ul>
+            <h3>{"Avec perf"}</h3>
+            <ul className="h-description-list">
+              <li className="h-dl-row">
+                    <span className="h-dl-title">
+                      {'Offres :'}
+                    </span>
+                <span className="h-dl-description">
+                      {statsPerf?.offersActive}
+                    </span>
+              </li>
+              <li className="h-dl-row">
+                    <span className="h-dl-title">
+                      {'Réservations :'}
+                    </span>
+                <span className="h-dl-description">
+                      {statsPerf?.bookingsCurrent}
+                    </span>
+              </li>
+              <li className="h-dl-row">
+                    <span className="h-dl-title">
+                      {'Offres épuisées :'}
+                    </span>
+                <span className="h-dl-description">
+                      {statsPerf?.offersSoldOut}
                     </span>
               </li>
             </ul>
