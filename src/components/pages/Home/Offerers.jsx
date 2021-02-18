@@ -14,6 +14,7 @@ const Offerers = () => {
   const [selectedOffererId, setSelectedOffererId] = useState(null)
   const [selectedOfferer, setSelectedOfferer] = useState(null)
   const [offlineVenues, setOfflineVenues] = useState([])
+  const [onlineVenue, setOnlineVenue] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(function fetchData() {
@@ -35,6 +36,7 @@ const Offerers = () => {
     if (isLoading) return
     pcapi.getVenuesForOfferer(selectedOfferer.id).then(venues => {
       setOfflineVenues(venues.filter(venue => !venue.isVirtual))
+      setOnlineVenue(venues.filter(venue => venue.isVirtual)[0])
     })
   }, [isLoading, selectedOfferer])
 
@@ -136,19 +138,9 @@ const Offerers = () => {
       </div>
 
       <div className="h-venue-list">
-        <div className="h-section-row nested">
-          <div className="h-card h-card-primary">
-            <div className="h-card-inner">
-              <h3 className="h-card-title">
-                <Icon
-                  className="h-card-title-ico"
-                  svg="ico-screen-play"
-                />
-                {'Lieu numérique'}
-              </h3>
-            </div>
-          </div>
-        </div>
+        { onlineVenue && (
+        <VenueItem  offerer={selectedOfferer} venue={onlineVenue}/>
+        )}
 
         {offlineVenues &&
           offlineVenues.map(venue => (

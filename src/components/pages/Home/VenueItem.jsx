@@ -10,7 +10,7 @@ const VenueItem = ({ offerer, venue }) => {
 
   useEffect(function fetchData() {
     pcapi.getVenueStats(venue.id).then(stats => setStats(stats))
-    pcapi.getVenueStatsPerf(venue.id).then(stats => setStatsPerf(stats))
+    pcapi.getVenueStatsPerf(venue.id).then(stats => setStatsPerf(stats)).catch(()=> 'NOT IMPLEMENTED')
   }, [venue.id])
   return (
     <div
