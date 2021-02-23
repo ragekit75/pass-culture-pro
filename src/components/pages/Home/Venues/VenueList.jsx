@@ -6,8 +6,10 @@ export const VenueList = ({ physicalVenues, selectedOffererId, virtualVenue }) =
   <div className="h-venue-list">
     {virtualVenue && (
       <Venue
+        id={virtualVenue.id}
         isVirtual
         name="Lieu numérique"
+        offererId={selectedOffererId}
       />
     )}
 

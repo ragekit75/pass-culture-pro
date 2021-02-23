@@ -21,7 +21,6 @@ const OffererDetails = ({
   selectedOfferer,
 }) => {
   const [isVisible, setIsVisible] = useState(!hasPhysicalVenues)
-
   useEffect(() => setIsVisible(!hasPhysicalVenues), [hasPhysicalVenues])
 
   const toggleVisibility = useCallback(
@@ -139,7 +138,7 @@ OffererDetails.propTypes = {
   offererOptions: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
+      displayName: PropTypes.string.isRequired,
     })
   ).isRequired,
   selectedOfferer: PropTypes.shape().isRequired,
