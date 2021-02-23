@@ -21,6 +21,8 @@ import {
   setOfferValues,
 } from './helpers'
 
+Element.prototype.scrollIntoView = () => {}
+
 jest.mock('repository/pcapi/pcapi', () => ({
   createOffer: jest.fn(),
   getValidatedOfferersNames: jest.fn(),
